@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# nuke extraneous whitespace from orbit
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+git diff-index --check --cached $against -- 1>&2
+[[ $? != "0" ]] && exit 1
+
+
+# fix environment of githooks
+unset GIT_DIR
+# make sure .SRCINFO is up to date
+for path in $(git diff --name-only --cached); do
+    if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
+        echo -e "\033[0;32m *** Generating and adding .SRCINFO for ${path%/PKGBUILD} ***\033[0m"
+        (cd ${path%PKGBUILD} && mksrcinfo)
+        git add ${path%PKGBUILD}/.SRCINFO
+    fi
+done

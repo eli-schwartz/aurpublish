@@ -1,0 +1,13 @@
+#!/bin/bash
+
+old_commit_msg="$(cat ${1})"
+echo -n "" > "${1}"
+
+for path in $(git diff --name-only --cached); do
+    if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
+        source "${path}"
+        echo -e "upgpkg: ${pkgname} ${pkgver}-${pkgrel}\n" >> "${1}"
+    fi
+done
+
+echo "${old_commit_msg}" >> "${1}"

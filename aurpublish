@@ -1,0 +1,48 @@
+#!/bin/bash
+
+usage()
+{
+	cat <<- _EOF_
+		Usage: ./aurpublish [OPTIONS] PACKAGE
+		Push a subtree to the AUR
+
+		OPTIONS
+		    -n, --new       register package for the first time
+		    -h, --help      show this usage message
+_EOF_
+}
+
+while [[ "${1}" != "" ]]; do
+    case ${1} in
+        -h|--help)
+            usage
+            exit
+            ;;
+        -n|--new)
+            new=1
+            ;;
+        *)
+            if [[ -d "${1}" ]]; then
+                package="${1%/}"
+            else
+                echo "${0}: unrecognized option '${1}'"
+                echo "Try '${0} --help' for more information."
+                exit 1
+            fi
+    esac
+    shift
+done
+
+
+# push to legacy AUR. Remove this when AUR 4.0 takes over.
+burp ${package}/*.src.tar.gz
+if [[ "$?" = "1" ]]; then
+    echo "Failed to upload aurball."
+    echo "Aborting push..."
+    exit 1
+fi
+
+if [[ "${new}" = "1" ]]; then
+    ssh aur setup-repo ${package}
+fi
+git subtree push -P "${package}" aur:/${package}.git master
