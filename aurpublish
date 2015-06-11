@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#### Declare usage
+
 usage()
 {
 	cat <<- _EOF_
@@ -8,10 +10,23 @@ usage()
 
 		OPTIONS
 		    -n, --new       register package for the first time
+		    -a, --adopt     instead of publishing, pull an exisisting package
+		                      into a new subtree
+		    -s, --speedup   speedup future publishing by recording the subtree
+		                      history during a push. This creates a merge commit
+		                      and an extra copy of all commits in the subtree.
+		                      For more details, see the "--rejoin" option in git
+		                      subtree.
 		    -h, --help      show this usage message
 _EOF_
 }
 
+#### Do the great option check
+
+if [[ $# -eq 0 ]]; then
+    echo "error: No arguments passed. aurpublish needs a package to upload."
+    exit 1
+fi
 while [[ "${1}" != "" ]]; do
     case ${1} in
         -h|--help)
@@ -21,11 +36,17 @@ while [[ "${1}" != "" ]]; do
         -n|--new)
             new=1
             ;;
+        -a|--adopt)
+            adopt=1
+            ;;
+        -s|--speedup)
+            speedup=1
+            ;;
         *)
             if [[ -d "${1}" ]]; then
                 package="${1%/}"
             else
-                echo "${0}: unrecognized option '${1}'"
+                echo "${0}: unrecognized package '${1}'"
                 echo "Try '${0} --help' for more information."
                 exit 1
             fi
@@ -33,16 +54,23 @@ while [[ "${1}" != "" ]]; do
     shift
 done
 
+#### MAIN
 
 # push to legacy AUR. Remove this when AUR 4.0 takes over.
 burp ${package}/*.src.tar.gz
 if [[ "$?" = "1" ]]; then
-    echo "Failed to upload aurball."
-    echo "Aborting push..."
+    echo "Failed to upload aurball. Aborting push..."
     exit 1
 fi
 
 if [[ "${new}" = "1" ]]; then
     ssh aur setup-repo ${package}
+fi
+if [[ "${adopt}" = "1" ]]; then
+    git subtree pull -P "${package}" aur:/${package}.git master
+    exit 0
+fi
+if [[ "${speedup}" = "1" ]]; then
+    git subtree split -P "${package}" --rejoin
 fi
 git subtree push -P "${package}" aur:/${package}.git master
