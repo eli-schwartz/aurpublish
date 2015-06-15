@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # generate AUR 3.5 aurballs
-for path in $(git diff --name-only HEAD~1); do
+for path in $(git diff --name-only HEAD~1 HEAD); do
     if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
         echo -e "\033[0;32m *** Generating aurball for ${path%/PKGBUILD} ***\033[0m"
-        (cd ${path%PKGBUILD} && makepkg --source)
+        (cd ${path%PKGBUILD} && makepkg --source > /dev/null 2>&1)
     fi
 done

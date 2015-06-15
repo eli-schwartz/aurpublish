@@ -3,10 +3,21 @@
 old_commit_msg="$(cat ${1})"
 echo -n "" > "${1}"
 
-for path in $(git diff --name-only --cached); do
+# Check for new PKGBUILDS
+for path in $(git diff --name-only --cached --diff-filter=A); do
+    if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
+        source "${path}"
+        echo -e "Initial upload: ${pkgname} ${pkgver}-${pkgrel}\n" >> "${1}"
+    fi
+done
+
+# Check for updated PKGBUILDS
+for path in $(git diff --name-only --cached --diff-filter=M); do
     if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
         source "${path}"
         echo -e "upgpkg: ${pkgname} ${pkgver}-${pkgrel}\n" >> "${1}"
+        # If the pkgrel is "1", assume a new version
+        [[ "${pkgrel}" = "1" ]] && echo -e "upstream release\n" >> "${1}"
     fi
 done
 

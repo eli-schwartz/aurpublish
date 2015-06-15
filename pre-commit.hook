@@ -9,7 +9,7 @@ else
 	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
 fi
 git diff-index --check --cached $against -- 1>&2
-[[ $? != "0" ]] && exit 1
+[[ $? != "0" ]] && echo -e "\033[0;31mThis commit contains whitespace issues!\033[0m"
 
 
 # fix environment of githooks
