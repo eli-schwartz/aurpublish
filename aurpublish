@@ -38,6 +38,8 @@ while [[ "${1}" != "" ]]; do
             ;;
         -a|--adopt)
             adopt=1
+            shift
+            package="${1}"
             ;;
         -s|--speedup)
             speedup=1
@@ -56,6 +58,11 @@ done
 
 #### MAIN
 
+if [[ "${adopt}" = "1" ]]; then
+    git subtree add -P "${package}" aur:/${package}.git master
+    exit 0
+fi
+
 # push to legacy AUR. Remove this when AUR 4.0 takes over.
 burp ${package}/*.src.tar.gz
 if [[ "$?" = "1" ]]; then
@@ -65,10 +72,6 @@ fi
 
 if [[ "${new}" = "1" ]]; then
     ssh aur setup-repo ${package}
-fi
-if [[ "${adopt}" = "1" ]]; then
-    git subtree pull -P "${package}" aur:/${package}.git master
-    exit 0
 fi
 if [[ "${speedup}" = "1" ]]; then
     git subtree split -P "${package}" --rejoin
