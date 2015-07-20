@@ -9,16 +9,21 @@ usage()
 		Push a subtree to the AUR
 
 		OPTIONS
-		    -n, --new       register package for the first time
-		    -a, --adopt     instead of publishing, pull an exisisting package
-		                      into a new subtree
+		    -p, --pull      instead of publishing, pull changes from the AUR.
+		                      Can import packages into a new subtree.
 		    -s, --speedup   speedup future publishing by recording the subtree
 		                      history during a push. This creates a merge commit
-		                      and an extra copy of all commits in the subtree.
+		                      and a second copy of all commits in the subtree.
 		                      For more details, see the "--rejoin" option in git
 		                      subtree.
 		    -h, --help      show this usage message
 _EOF_
+}
+
+## Function to test if package is already committed in git
+is_package_in_git()
+{
+    git ls-tree -d --name-only HEAD | grep -E "^${1}$" > /dev/null 2>&1
 }
 
 #### Do the great option check
@@ -33,11 +38,8 @@ while [[ "${1}" != "" ]]; do
             usage
             exit
             ;;
-        -n|--new)
-            new=1
-            ;;
-        -a|--adopt)
-            adopt=1
+        -p|--pull)
+            pull_subtree=1
             shift
             package="${1}"
             ;;
@@ -45,7 +47,7 @@ while [[ "${1}" != "" ]]; do
             speedup=1
             ;;
         *)
-            if [[ -d "${1}" ]]; then
+            if is_package_in_git ${1%/}; then
                 package="${1%/}"
             else
                 echo "${0}: unrecognized package '${1}'"
@@ -58,8 +60,13 @@ done
 
 #### MAIN
 
-if [[ "${adopt}" = "1" ]]; then
-    git subtree add -P "${package}" aur:/${package}.git master
+if [[ "${pull_subtree}" = "1" ]]; then
+    # test if prefix already exists
+    if is_package_in_git ${package}; then
+        git subtree pull -P "${package}" aur:${package}.git master -m "Merge subtree '${package}'"
+    else
+        git subtree add -P "${package}" aur:${package}.git master
+    fi
     exit 0
 fi
 
@@ -70,10 +77,7 @@ if [[ "$?" = "1" ]]; then
     exit 1
 fi
 
-if [[ "${new}" = "1" ]]; then
-    ssh aur setup-repo ${package}
-fi
 if [[ "${speedup}" = "1" ]]; then
     git subtree split -P "${package}" --rejoin
 fi
-git subtree push -P "${package}" aur:/${package}.git master
+git subtree push -P "${package}" aur:${package}.git master

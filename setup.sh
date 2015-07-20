@@ -7,21 +7,25 @@ usage()
 		Set up infrastructure for tracking PKGBUILDs.
 
 		OPTIONS
-		    -h, --help      show this usage message
+		    -h, --help          show this usage message
 
 		COMMANDS
-		    ssh             append ssh-config rules
-		    hooks           add commit hooks
+		    ssh [/path/to/key]  add/replace ssh-config rules.
+		                          Key defaults to '~/.ssh/keys/aur'
+		    hooks               link hooks from repo root to
+		                          githooks directory. Must be
+		                          run from repo root.
 _EOF_
 }
 
 ssh() {
-    echo "Appending ssh-config rules..."
+    echo "Adding ssh-config rules (this will clear previous rules for 'aur')..."
+    sed -ri '/^Host aur(( aur)?.*\.archlinux\.org)?$/,+3d' ~/.ssh/config
 	cat <<- _EOF_ >> ~/.ssh/config
-		Host aur
+		Host aur aur4.archlinux.org
 		    User aur
 		    Hostname aur4.archlinux.org
-		    IdentityFile ~/.ssh/keys/aur
+		    IdentityFile ${keypath}
 _EOF_
 }
 
@@ -45,6 +49,8 @@ while [[ "${1}" != "" ]]; do
             exit
             ;;
         ssh)
+            shift
+            keypath="${1:-~/.ssh/keys/aur}"
             ssh
             ;;
         hooks)
