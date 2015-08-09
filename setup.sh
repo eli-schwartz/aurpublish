@@ -22,9 +22,9 @@ ssh() {
     echo "Adding ssh-config rules (this will clear previous rules for 'aur')..."
     sed -ri '/^Host aur(( aur)?.*\.archlinux\.org)?$/,+3d' ~/.ssh/config
 	cat <<- _EOF_ >> ~/.ssh/config
-		Host aur aur4.archlinux.org
+		Host aur aur.archlinux.org
 		    User aur
-		    Hostname aur4.archlinux.org
+		    Hostname aur.archlinux.org
 		    IdentityFile ${keypath}
 _EOF_
 }
