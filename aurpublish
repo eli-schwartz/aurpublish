@@ -41,7 +41,7 @@ while [[ "${1}" != "" ]]; do
         -p|--pull)
             pull_subtree=1
             shift
-            package="${1}"
+            package="${1/}"
             ;;
         -s|--speedup)
             speedup=1
