@@ -9,14 +9,19 @@ usage()
 		Push a subtree to the AUR
 
 		OPTIONS
-		    -p, --pull      instead of publishing, pull changes from the AUR.
+		    -p, --pull      Instead of publishing, pull changes from the AUR.
 		                      Can import packages into a new subtree.
-		    -s, --speedup   speedup future publishing by recording the subtree
+		    -s, --speedup   Speedup future publishing by recording the subtree
 		                      history during a push. This creates a merge commit
 		                      and a second copy of all commits in the subtree.
 		                      For more details, see the "--rejoin" option in git
 		                      subtree.
-		    -h, --help      show this usage message
+		    -h, --help      Show this usage message
+
+		COMMANDS
+		    log             Display the git log of a single package. This is only
+		                      useful if changes were pulled from the AUR (because
+		                      \`git log\` isn't very good at reading subtrees).
 _EOF_
 }
 
@@ -41,10 +46,17 @@ while [[ "${1}" != "" ]]; do
         -p|--pull)
             pull_subtree=1
             shift
-            package="${1/}"
+            package="${1%/}"
             ;;
         -s|--speedup)
             speedup=1
+            ;;
+        log)
+            shift
+            package="${1%/}"
+            shift
+            git log $(git subtree split -P $package) "$@"
+            exit
             ;;
         *)
             if is_package_in_git ${1%/}; then
@@ -63,6 +75,7 @@ done
 if [[ "${pull_subtree}" = "1" ]]; then
     # test if prefix already exists
     if is_package_in_git ${package}; then
+        git subtree split -P "${package}" --rejoin
         git subtree pull -P "${package}" aur:${package}.git master -m "Merge subtree '${package}'"
     else
         git subtree add -P "${package}" aur:${package}.git master

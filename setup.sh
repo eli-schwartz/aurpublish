@@ -7,14 +7,13 @@ usage()
 		Set up infrastructure for tracking PKGBUILDs.
 
 		OPTIONS
-		    -h, --help          show this usage message
+		    -h, --help          Show this usage message
 
 		COMMANDS
-		    ssh [/path/to/key]  add/replace ssh-config rules.
+		    ssh [/path/to/key]  Add/replace ssh-config rules.
 		                          Key defaults to '~/.ssh/keys/aur'
-		    hooks               link hooks from repo root to
-		                          githooks directory. Must be
-		                          run from repo root.
+		    hooks               Link hooks from repo root to githooks directory.
+		                          Must be run from repo root.
 _EOF_
 }
 
