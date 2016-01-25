@@ -3,7 +3,7 @@
 old_commit_msg="$(cat ${1})"
 echo -n "" > "${1}"
 
-# Check for new PKGBUILDS
+# Check for new PKGBUILDs
 for path in $(git diff --name-only --cached --diff-filter=A); do
     if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
         source "${path}"
@@ -11,13 +11,20 @@ for path in $(git diff --name-only --cached --diff-filter=A); do
     fi
 done
 
-# Check for updated PKGBUILDS
+# Check for updated PKGBUILDs
 for path in $(git diff --name-only --cached --diff-filter=M); do
     if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
         source "${path}"
         echo -e "upgpkg: ${pkgname} ${pkgver}-${pkgrel}\n" >> "${1}"
         # If the pkgrel is "1", assume a new version
         [[ "${pkgrel}" = "1" ]] && echo -e "upstream release\n" >> "${1}"
+    fi
+done
+
+# Check for deleted PKGBUILDs
+for path in $(git diff --name-only --cached --diff-filter=D); do
+    if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
+        echo -e "Deleted package: ${path%/PKGBUILD}\n" >> "${1}"
     fi
 done
 
