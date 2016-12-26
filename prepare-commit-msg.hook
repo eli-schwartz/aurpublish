@@ -15,9 +15,11 @@ done
 for path in $(git diff --name-only --cached --diff-filter=M); do
     if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
         source "${path}"
+
         echo -e "upgpkg: ${pkgname} ${pkgver}-${pkgrel}\n" >> "${1}"
-        # If the pkgrel is "1", assume a new version
-        [[ "${pkgrel}" = "1" ]] && echo -e "upstream release\n" >> "${1}"
+        # If the pkgrel is "1" and there is no VCS pkgver function (or there is one, but the git revision is "0"), assume a new version.
+        [[ $pkgver =~ .+\.r([0-9]+)\..+ ]]
+        [[ "${pkgrel}" = "1" && ( $(type -t pkgver) != "function" || ${BASH_REMATCH[1]} = 0 ) ]] && echo -e "upstream release\n" >> "${1}"
     fi
 done
 

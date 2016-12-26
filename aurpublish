@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#### Declare usage
+# Declare usage
 
 usage()
 {
@@ -19,13 +19,15 @@ usage()
 		    -h, --help      Show this usage message
 
 		COMMANDS
-		    log             Display the git log of a single package. This is only
-		                      useful if changes were pulled from the AUR (because
-		                      \`git log\` isn't very good at reading subtrees).
+		    log             Wrapper for \`git log\`, substituting a package
+		                      subtree for the revision/branch. This is only
+		                      useful if changes were pulled from the AUR
+		                      (because \`git log\` isn't very good at reading
+		                      subtrees).
 _EOF_
 }
 
-## Function to test if package is already committed in git
+# Function to test if package is already committed in git
 is_package_in_git()
 {
     git ls-tree -d --name-only HEAD | grep -E "^${1}$" > /dev/null 2>&1
@@ -53,9 +55,10 @@ while [[ "${1}" != "" ]]; do
             ;;
         log)
             shift
+            while [[ ! -d "${1}" ]]; do log_pre_opts+=("${1}"); shift; done
             package="${1%/}"
             shift
-            git log $(git subtree split -P $package) "$@"
+            git log "${log_pre_opts[@]}" $(git subtree split -P "${package}") "$@"
             exit
             ;;
         *)
@@ -72,11 +75,13 @@ done
 
 #### MAIN
 
+pkgbase="$(sed -rn 's/pkgbase = (.*)/\1/p' "${package}"/.SRCINFO 2>/dev/null)"
+
 if [[ "${pull_subtree}" = "1" ]]; then
     # test if prefix already exists
     if is_package_in_git ${package}; then
         git subtree split -P "${package}" --rejoin
-        git subtree pull -P "${package}" aur:${package}.git master -m "Merge subtree '${package}'"
+        git subtree pull -P "${package}" aur:${pkgbase}.git master -m "Merge subtree '${package}'"
     else
         git subtree add -P "${package}" aur:${package}.git master
     fi
@@ -86,4 +91,4 @@ fi
 if [[ "${speedup}" = "1" ]]; then
     git subtree split -P "${package}" --rejoin
 fi
-git subtree push -P "${package}" aur:${package}.git master
+git subtree push -P "${package}" aur:${pkgbase}.git master
