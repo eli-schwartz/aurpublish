@@ -33,3 +33,7 @@ This preserves an independent history for third-party hosting, pull requests... 
 
 * prepare-commit-msg
 > Prefill the commit message with a list of added/updated/deleted packages + versions (if any).
+
+## Copyright
+All PKGBUILD files in this repository are licensed under the Unlicense. IMHO they aren't unique enough to qualify for copyright, therefore I have made this explicit.
+The helper scripts (aurpublish, *.sh, *.hook) used are licensed under the GPLv2 or (at your option) any later version.
