@@ -6,20 +6,26 @@ echo -n "" > "${1}"
 # Check for new PKGBUILDs
 for path in $(git diff --name-only --cached --diff-filter=A); do
     if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
-        source "${path}"
-        echo -e "Initial upload: ${pkgname} ${pkgver}-${pkgrel}\n" >> "${1}"
+        (
+            source "${path}"
+            : ${pkgbase:=${pkgname}}
+            echo -e "Initial upload: ${pkgbase} ${epoch:+${epoch}}${pkgver}-${pkgrel}\n" >> "${1}"
+        )
     fi
 done
 
 # Check for updated PKGBUILDs
 for path in $(git diff --name-only --cached --diff-filter=M); do
     if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
-        source "${path}"
+        (
+            source "${path}"
+            : ${pkgbase:=${pkgname}}
+            echo -e "upgpkg: ${pkgbase} ${epoch:+${epoch}}${pkgver}-${pkgrel}\n" >> "${1}"
 
-        echo -e "upgpkg: ${pkgname} ${pkgver}-${pkgrel}\n" >> "${1}"
-        # If the pkgrel is "1" and there is no VCS pkgver function (or there is one, but the git revision is "0"), assume a new version.
-        [[ $pkgver =~ .+\.r([0-9]+)\..+ ]]
-        [[ "${pkgrel}" = "1" && ( $(type -t pkgver) != "function" || ${BASH_REMATCH[1]} = 0 ) ]] && echo -e "upstream release\n" >> "${1}"
+            # If the pkgrel is "1" and there is no VCS pkgver function (or there is one, but the git revision is "0"), assume a new version.
+            [[ $pkgver =~ .+\.r([0-9]+)\..+ ]]
+            [[ "${pkgrel}" = "1" && ( $(type -t pkgver) != "function" || ${BASH_REMATCH[1]} = 0 ) ]] && echo -e "upstream release\n" >> "${1}"
+        )
     fi
 done
 
