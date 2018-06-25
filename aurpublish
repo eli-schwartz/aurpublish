@@ -2,8 +2,7 @@
 
 # Declare usage
 
-usage()
-{
+usage() {
 	cat <<- _EOF_
 		Usage: ./aurpublish [OPTIONS] PACKAGE
 		Push a subtree to the AUR
@@ -28,8 +27,7 @@ _EOF_
 }
 
 # Function to test if package is already committed in git
-is_package_in_git()
-{
+is_package_in_git() {
     git ls-tree -d --name-only HEAD | grep -E "^${1}$" > /dev/null 2>&1
 }
 
@@ -46,20 +44,19 @@ while [[ "${1}" != "" ]]; do
             exit
             ;;
         -p|--pull)
-            pull_subtree=1
+            PULL_SUBTREE=1
             shift
             package="${1%/}"
             ;;
         -s|--speedup)
-            speedup=1
+            SPEEDUP=1
             ;;
         log)
-            shift
-            while [[ ! -d "${1}" ]]; do log_pre_opts+=("${1}"); shift; done
-            package="${1%/}"
-            shift
-            git log "${log_pre_opts[@]}" $(git subtree split -P "${package}") "$@"
-            exit
+            LOG=1
+            while [[ ! -d "${2}" ]]; do
+                log_pre_opts+=("${2}")
+                shift
+            done
             ;;
         *)
             if is_package_in_git ${1%/}; then
@@ -69,15 +66,22 @@ while [[ "${1}" != "" ]]; do
                 echo "Try '${0} --help' for more information."
                 exit 1
             fi
+            (( LOG )) && break
     esac
     shift
 done
 
 #### MAIN
 
+if (( LOG )); then
+    shift
+    git log "${log_pre_opts[@]}" $(git subtree split -P "${package}") "$@"
+    exit 0
+fi
+
 pkgbase="$(sed -rn 's/pkgbase = (.*)/\1/p' "${package}"/.SRCINFO 2>/dev/null)"
 
-if [[ "${pull_subtree}" = "1" ]]; then
+if (( PULL_SUBTREE )); then
     # test if prefix already exists
     if is_package_in_git ${package}; then
         git subtree split -P "${package}" --rejoin
@@ -88,7 +92,7 @@ if [[ "${pull_subtree}" = "1" ]]; then
     exit 0
 fi
 
-if [[ "${speedup}" = "1" ]]; then
+if (( SPEEDUP )); then
     git subtree split -P "${package}" --rejoin
 fi
 git subtree push -P "${package}" aur:${pkgbase}.git master
