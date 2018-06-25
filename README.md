@@ -1,30 +1,29 @@
-# PKGBUILDs for [Arch User Repository](https://aur.archlinux.org)
-Includes control scripts for managing AUR packages.
+# PKGBUILD management framework for the [Arch User Repository](https://aur.archlinux.org)
 
-In order to reuse this, checkout the "base" branch and add your own packages on top. Don't keep mine. ;)
-An additional branch, "submodules-base", contains a previous attempt of mine. I decided I don't want to use submodules, but if you'd rather use that, feel free to take a look. :)
+## Install
+The standard `make && sudo make install` routine is used. The following additional variables are supported:
+* `DESTDIR` -- staged installs for distro packaging
+* `PREFIX` -- where to install generated script, defaults to /usr/local
+* `HOOKSDIR` -- where to install [githooks](#hooks), defaults to `<PREFIX>/share/aurpublish`
 
 ## How it works
-Commit PKGBUILDs in named subdirectories. Export them to the AUR with the included `aurpublish` script, using the subtree push stratagem.
+Commit PKGBUILDs in named subdirectories. Export them to the AUR with the `aurpublish` command, using the subtree push stratagem.
 This preserves an independent history for third-party hosting, pull requests... ;)
 
 ## Commands
-* `./setup.sh ssh`
-> Append ssh-config rules for accessing the AUR.
+* `aurpublish setup`
+> Initialize a new repository with [githooks](#hooks).
 
-* `./setup.sh hooks`
-> Install [githooks](#hooks).
-
-* `./aurpublish PACKAGE`
+* `aurpublish PACKAGE`
 > Push PACKAGE to the AUR. With "--speedup", merges the split history back in.
 
-* `./aurpublish -p PACKAGE`
+* `aurpublish -p PACKAGE`
 > Pull package from the AUR (if you adopted an existing package, or have a co-maintainer).
 
-* `./aurpublish log PACKAGE`
+* `aurpublish log PACKAGE`
 > View the git log of a package subtree.
 
-* `./import-from-aur3.sh PACKAGE`
+* `import-from-aur3.sh PACKAGE`
 > Experimental. Download the history of a non-migrated AUR3 package, and commit it to a new subtree.
 
 ## Hooks
@@ -35,5 +34,4 @@ This preserves an independent history for third-party hosting, pull requests... 
 > Prefill the commit message with a list of added/updated/deleted packages + versions (if any).
 
 ## Copyright
-All PKGBUILD files in this repository are licensed under the Unlicense. IMHO they aren't unique enough to qualify for copyright, therefore I have made this explicit.
-The helper scripts (aurpublish, *.sh, *.hook) used are licensed under the GPLv2 or (at your option) any later version.
+The helper scripts (aurpublish, *.sh, *.hook) demonstrated here are licensed under the GPLv2 or (at your option) any later version.
