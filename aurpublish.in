@@ -1,10 +1,12 @@
 #!/bin/bash
 
-# Declare usage
+#### Declare common functions
+
+# usage and other awkward blocks of preformatted text
 
 usage() {
 	cat <<- _EOF_
-		Usage: ./aurpublish [OPTIONS] PACKAGE
+		Usage: ${0##*/} [OPTIONS] PACKAGE
 		Push a subtree to the AUR
 
 		OPTIONS
@@ -18,6 +20,7 @@ usage() {
 		    -h, --help      Show this usage message
 
 		COMMANDS
+		    setup           Install githooks to the repository
 		    log             Wrapper for \`git log\`, substituting a package
 		                      subtree for the revision/branch. This is only
 		                      useful if changes were pulled from the AUR
@@ -26,7 +29,18 @@ usage() {
 _EOF_
 }
 
-# Function to test if package is already committed in git
+ssh_config() {
+	cat <<- _EOF_
+		\`\`\`
+		Host aur aur.archlinux.org
+		    User aur
+		    Hostname aur.archlinux.org
+		    IdentityFile ~/.ssh/keys/aur
+		\`\`\`
+_EOF_
+}
+
+# check if pkgname is already committed in git, relative to repository root
 is_package_in_git() {
     git ls-tree -d --name-only HEAD | grep -E "^${1}$" > /dev/null 2>&1
 }
@@ -46,7 +60,8 @@ while [[ "${1}" != "" ]]; do
         -p|--pull)
             PULL_SUBTREE=1
             shift
-            package="${1%/}"
+            package=$(readlink -m "${1}")
+            package=${package##*/}
             ;;
         -s|--speedup)
             SPEEDUP=1
@@ -58,20 +73,54 @@ while [[ "${1}" != "" ]]; do
                 shift
             done
             ;;
+        setup)
+            SETUP=1
+            ;;
         *)
-            if is_package_in_git ${1%/}; then
-                package="${1%/}"
-            else
-                echo "${0}: unrecognized package '${1}'"
-                echo "Try '${0} --help' for more information."
+            if [[ -n ${package} ]]; then
+                echo "error: multiple packages specified"
                 exit 1
             fi
+            package=$(readlink -m "${1}")
+            package=${package##*/}
             (( LOG )) && break
+            ;;
     esac
     shift
 done
 
-#### MAIN
+#### INIT
+
+# Run from the repository root, no matter where the script is installed.
+toplevel=$(git rev-parse --show-toplevel) || exit 1
+if [[ $(git rev-parse --is-inside-git-dir) = true ]]; then
+    echo "error: cannot be run from within GIT_DIR"
+    exit 1
+elif [[ ! ${toplevel} -ef ${PWD} ]]; then
+    cd "${toplevel}"
+fi
+
+# sanity check
+if (( ! ( PULL_SUBTREE || SETUP ) )) && ! is_package_in_git "${package}"; then
+    echo "${0##*/}: unrecognized package '${1}'"
+    echo "Try '${0##*/} --help' for more information."
+    exit 1
+fi
+
+#### INIT
+
+if (( SETUP )); then
+    echo "Adding commit hooks..."
+    shopt -s nullglob
+    for hook in "@HOOKSDIR@"/*.hook; do
+        hookname=${hook##*/}
+        echo "-> ${hookname}"
+        ln -sf "${hook}" "$(git rev-parse --git-dir)/hooks/${hookname%.hook}"
+    done
+    echo "Add the following snippet to your ~/.ssh/config (assuming ssh key is in ~/.ssh/keys/aur):"
+    ssh_config
+    exit 0
+fi
 
 if (( LOG )); then
     shift
