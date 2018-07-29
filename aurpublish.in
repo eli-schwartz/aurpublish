@@ -42,7 +42,7 @@ _EOF_
 
 # check if pkgname is already committed in git, relative to repository root
 is_package_in_git() {
-    git ls-tree -d --name-only HEAD | grep -E "^${1}$" > /dev/null 2>&1
+    git ls-tree -d --name-only HEAD | grep -qxF "${1}"
 }
 
 #### Do the great option check
