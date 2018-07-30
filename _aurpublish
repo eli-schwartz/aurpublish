@@ -1,0 +1,20 @@
+#compdef aurpublish
+
+local curcontext="$curcontext" state line libs idx
+typeset -A descs opt_args
+
+# [keys]=commands 'vals'=description
+descs[setup]='Install githooks to the repository.'
+descs[log]='Wrapper for `git log` to substitute a package subtree for the revision/branch.'
+
+# leverage --help option parsing
+_arguments -C -s \
+	":COMMANDS:((setup\\:'$descs[setup]' log\\:'$descs[log]'))" \
+	":PACKAGES:->pkgs" \
+	-- && ret=0
+
+# only complete package directories
+case $state in
+pkgs)
+	_wanted files expl 'PACKAGES' _files -g "./*(/:r)" && ret=0;;
+esac
