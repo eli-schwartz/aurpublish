@@ -1,4 +1,4 @@
-AME := aurpublish
+NAME := aurpublish
 PREFIX ?= /usr/local
 HOOKSDIR ?= $(PREFIX)/share/aurpublish
 ZCOMPDIR ?= $(PREFIX)/share/zsh/site-functions
