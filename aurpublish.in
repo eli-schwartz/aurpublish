@@ -68,7 +68,7 @@ while [[ "${1}" != "" ]]; do
             ;;
         log)
             LOG=1
-            while [[ ! -d "${2}" ]]; do
+            while [[ ${2} && ! -d ${2} ]]; do
                 log_pre_opts+=("${2}")
                 shift
             done
