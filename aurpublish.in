@@ -21,8 +21,7 @@ OPTIONS
 
 COMMANDS
 	setup		Install githooks to the repository
-	log		Wrapper for \`git log\`, substituting a package
-			Wrapper for \`git log\` to substitute a package
+	log		Wrapper for \`git log\` to substitute a package
 			subtree for the revision/branch. This is only
 			useful if changes were pulled from the AUR
 			(because \`git log\` isn't very good at reading
