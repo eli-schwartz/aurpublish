@@ -7,6 +7,9 @@
 usage() {
 	cat <<- _EOF_
 		Usage: ${0##*/} [OPTIONS] PACKAGE
+		Usage: ${0##*/} log [<options>] PACKAGE [[--] <path>...]
+		Usage: ${0##*/} setup
+
 		Push a subtree to the AUR
 
 		OPTIONS
