@@ -5,27 +5,28 @@
 # usage and other awkward blocks of preformatted text
 
 usage() {
-	cat <<- _EOF_
-		Usage: ${0##*/} [OPTIONS] PACKAGE
-		Push a subtree to the AUR
+	cat <<_EOF_
+USAGE: ${0##*/} [OPTIONS] <COMMAND|PACKAGE>
+	Push a subtree to the AUR.
 
-		OPTIONS
-		    -p, --pull      Instead of publishing, pull changes from the AUR.
-		                      Can import packages into a new subtree.
-		    -s, --speedup   Speedup future publishing by recording the subtree
-		                      history during a push. This creates a merge commit
-		                      and a second copy of all commits in the subtree.
-		                      For more details, see the "--rejoin" option in git
-		                      subtree.
-		    -h, --help      Show this usage message
+OPTIONS
+	-p, --pull	Instead of publishing, pull changes from the AUR.
+			Can import packages into a new subtree.
+	-s, --speedup	Speedup future publishing by recording the subtree
+			history during a push. This creates a merge commit
+			and a second copy of all commits in the subtree.
+			For more details, see the "--rejoin" option in git
+			subtree.
+	-h, --help	Show this usage message
 
-		COMMANDS
-		    setup           Install githooks to the repository
-		    log             Wrapper for \`git log\`, substituting a package
-		                      subtree for the revision/branch. This is only
-		                      useful if changes were pulled from the AUR
-		                      (because \`git log\` isn't very good at reading
-		                      subtrees).
+COMMANDS
+	setup		Install githooks to the repository
+	log		Wrapper for \`git log\`, substituting a package
+			Wrapper for \`git log\` to substitute a package
+			subtree for the revision/branch. This is only
+			useful if changes were pulled from the AUR
+			(because \`git log\` isn't very good at reading
+			subtrees).
 _EOF_
 }
 
