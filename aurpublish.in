@@ -5,7 +5,7 @@
 # usage and other awkward blocks of preformatted text
 
 usage() {
-	cat <<_EOF_
+	cat <<- _EOF_
 USAGE: ${0##*/} [OPTIONS] <COMMAND|PACKAGE>
 	Push a subtree to the AUR.
 
