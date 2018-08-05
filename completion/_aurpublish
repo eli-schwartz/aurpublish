@@ -6,7 +6,7 @@ typeset -A descs opt_args
 
 # [keys]=commands 'vals'=description
 descs[setup]='Install githooks to the repository.'
-descs[log]='Wrapper for `git log` to substitute a package subtree for the revision/branch.'
+descs[log]='Wrap `git log` and substitute a package subtree for the revision/branch.'
 
 # leverage --help option parsing
 _arguments -C -s \
@@ -17,6 +17,6 @@ _arguments -C -s \
 # only complete package directories
 case $state in
 pkgs)
-	pkg_dirs=(${(@0)$(git ls-tree -dz --name-only HEAD :/ 2>/dev/null)})
+	pkg_dirs=(${(M)${(@0)$(git ls-tree -dz --name-only HEAD :/ 2>/dev/null)}:#?*})
 	_wanted files expl 'PACKAGES' compadd -a pkg_dirs && ret=0;
 esac
