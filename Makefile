@@ -21,5 +21,5 @@ install: $(NAME)
 	install -m755 *.hook '$(DESTDIR)$(HOOKSDIR)/'
 	install -dm755 '$(DESTDIR)$(ZCOMPDIR)'
 	install -dm755 '$(DESTDIR)$(BASHCOMPDIR)'
-	install -m644 completion/_$(NAME) '$(DESTDIR)$(ZCOMPDIR)/_$(NAME)'
+	install -m644 completion/$(NAME).zsh '$(DESTDIR)$(ZCOMPDIR)/_$(NAME)'
 	install -m644 completion/$(NAME).bash '$(DESTDIR)$(BASHCOMPDIR)/$(NAME)'
