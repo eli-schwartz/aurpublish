@@ -34,4 +34,4 @@ This preserves an independent history for third-party hosting, pull requests... 
 > Prefill the commit message with a list of added/updated/deleted packages + versions (if any).
 
 ## Copyright
-The helper scripts (aurpublish, *.sh, *.hook) demonstrated here are licensed under the GPLv2 or (at your option) any later version.
+This repository is licensed under the GPLv2 or (at your option) any later version.
