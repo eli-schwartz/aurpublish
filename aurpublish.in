@@ -115,7 +115,7 @@ if (( ! ( PULL_SUBTREE || SETUP ) )) && ! is_package_in_git "${package}"; then
     exit 1
 fi
 
-#### INIT
+#### MAIN
 
 if (( SETUP )); then
     echo "Adding commit hooks..."
