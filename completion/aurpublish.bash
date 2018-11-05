@@ -28,21 +28,21 @@ _aurpublish() {
 
     mapfile -td '' pkgnames < <(git ls-tree -dz --name-only HEAD :/)
 
-    case $prev in
+    case ${prev} in
         # single-use arguments
         -h|--help|setup)
             return 0
             ;;
         @(${opts/ /|}))
             ;;
-        *) if __in_array "$prev" "${pkgnames[@]}"; then
+        *) if __in_array "${prev}" "${pkgnames[@]}"; then
                return 0 # nothing left to do
            else
                COMPREPLY=($(compgen -W "${opts} -h --help setup" -- "${cur}"))
            fi
     esac
 
-    mapfile -td '' -O "${#COMPREPLY[@]}" COMPREPLY < <(printf '%s\0' "${pkgnames[@]}" | grep -zE "^$cur")
+    mapfile -td '' -O "${#COMPREPLY[@]}" COMPREPLY < <(printf '%s\0' "${pkgnames[@]}" | grep -zE "^${cur}")
 }
 
 complete -F _aurpublish aurpublish
