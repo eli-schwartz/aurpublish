@@ -104,8 +104,8 @@ elif [[ ! ${toplevel} -ef ${PWD} ]]; then
 fi
 
 # sanity check
-if (( $(git rev-list -n 1 --all | wc -l) == 0 )); then
-    echo "error: cannot be run from a repository without any commits"
+if ! git rev-parse -q --verify HEAD > /dev/null ; then
+    echo "error: cannot be run from a branch without any commits"
     echo "At least commit a README.md or something..."
     exit 1
 fi
