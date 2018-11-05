@@ -21,12 +21,13 @@ _aurpublish() {
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     opts="-s -p --speedup --pull log"
 
-    if __in_array log "${COMP_WORDS[@]}"; then
-        : # TODO: do git wrapping here
+    mapfile -td '' pkgnames < <(git ls-tree -dz --name-only HEAD :/)
+
+    if __in_array log "${COMP_WORDS[@]}" && ! __in_array "${prev}" "${pkgnames[@]}"; then
+        # TODO: do git wrapping here and gain option support?
+        mapfile -td '' -O "${#COMPREPLY[@]}" COMPREPLY < <(printf '%s\0' "${pkgnames[@]}" | grep -zE "^${cur}")
         return 0
     fi
-
-    mapfile -td '' pkgnames < <(git ls-tree -dz --name-only HEAD :/)
 
     case ${prev} in
         # single-use arguments
