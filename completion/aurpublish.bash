@@ -38,7 +38,7 @@ _aurpublish() {
             ;;
         *) if __in_array "${prev}" "${pkgnames[@]}"; then
                return 0 # nothing left to do
-           else
+           elif [[ ${COMP_CWORD} = 1 ]]; then
                COMPREPLY=($(compgen -W "${opts} -h --help setup" -- "${cur}"))
            fi
     esac
