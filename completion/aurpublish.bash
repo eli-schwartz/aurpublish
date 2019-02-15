@@ -23,7 +23,7 @@ _aurpublish() {
 
     mapfile -td '' pkgnames < <(git ls-tree -dz --name-only HEAD :/ 2>/dev/null)
 
-    if __in_array log "${COMP_WORDS[@]}" && ! __in_array "${prev}" "${pkgnames[@]}"; then
+    if (( ${#pkgnames[@]} )) && __in_array log "${COMP_WORDS[@]}" && ! __in_array "${prev}" "${pkgnames[@]}"; then
         # TODO: do git wrapping here and gain option support?
         mapfile -td '' -O "${#COMPREPLY[@]}" COMPREPLY < <(printf '%s\0' "${pkgnames[@]}" | grep -zE "^${cur}")
         return 0
@@ -43,7 +43,9 @@ _aurpublish() {
            fi
     esac
 
-    mapfile -td '' -O "${#COMPREPLY[@]}" COMPREPLY < <(printf '%s\0' "${pkgnames[@]}" | grep -zE "^${cur}")
+    if (( ${#pkgnames[@]} )); then
+        mapfile -td '' -O "${#COMPREPLY[@]}" COMPREPLY < <(printf '%s\0' "${pkgnames[@]}" | grep -zE "^${cur}")
+    fi
 }
 
 complete -F _aurpublish aurpublish
