@@ -110,7 +110,7 @@ if ! git rev-parse -q --verify HEAD > /dev/null ; then
     exit 1
 fi
 if (( ! ( PULL_SUBTREE || SETUP ) )) && ! is_package_in_git "${package}"; then
-    echo "${0##*/}: unrecognized package '${1}'"
+    echo "${0##*/}: unrecognized package '${package}'"
     echo "Try '${0##*/} --help' for more information."
     exit 1
 fi
