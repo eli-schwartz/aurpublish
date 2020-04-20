@@ -9,7 +9,7 @@ for path in $(git diff --name-only --cached --diff-filter=A); do
         (
             source "${path}"
             : ${pkgbase:=${pkgname}}
-            echo -e "Initial upload: ${pkgbase} ${epoch:+${epoch}}${pkgver}-${pkgrel}\n" >> "${1}"
+            echo -e "Initial upload: ${pkgbase} ${epoch:+${epoch}:}${pkgver}-${pkgrel}\n" >> "${1}"
         )
     fi
 done
@@ -20,7 +20,7 @@ for path in $(git diff --name-only --cached --diff-filter=M); do
         (
             source "${path}"
             : ${pkgbase:=${pkgname}}
-            echo -e "upgpkg: ${pkgbase} ${epoch:+${epoch}}${pkgver}-${pkgrel}\n" >> "${1}"
+            echo -e "upgpkg: ${pkgbase} ${epoch:+${epoch}:}${pkgver}-${pkgrel}\n" >> "${1}"
 
             # If the pkgrel is "1" and there is no VCS pkgver function (or there is one, but the git revision is "0"), assume a new version.
             [[ $pkgver =~ .+\.r([0-9]+)\..+ ]]
