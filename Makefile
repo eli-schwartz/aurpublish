@@ -2,6 +2,7 @@ NAME := aurpublish
 PREFIX ?= /usr/local
 HOOKSDIR ?= $(PREFIX)/share/aurpublish
 ZCOMPDIR ?= $(PREFIX)/share/zsh/site-functions
+MANS = doc/aurpublish.1
 BASHCOMPDIR ?= $(shell pkg-config bash-completion --variable=completionsdir || echo '/usr/share/bash-completion/completions')
 
 edit = sed -e 's|@HOOKSDIR@|$(HOOKSDIR)|g'

@@ -1,0 +1,85 @@
+aurpublish(1)
+=============
+
+Name
+----
+aurpublish - PKGBUILD management framework for the Arch User Repository
+
+
+Synopsis
+--------
+'aurpublish' [options] PACKAGE
+
+'aurpublish' log [<options>] PACKAGE
+
+'aurpublish' setup
+
+
+Description
+-----------
+Aurpublish is an utility which helps maintainers of aur packages to submit updates.
+
+
+How it works
+------------
+Commit PKGBUILDs in named subdirectories.
+Export them to the AUR with the aurpublish command, using the subtree push 
+stratagem. This preserves an independent history for third-party hosting, 
+pull requests... ;)
+
+Commands
+--------
+
+*setup*::
+        Initialize a new repository with git hooks.
+
+*log* <PACKAGE>::
+        View the git log of a package subtree.
+
+Options
+-------
+
+*-p* <PACKAGE>::
+        Instead of publishing, pull changes from the AUR.
+        Can import packages into a new subtree.
+
+*-s*, *--speedup* <PACKAGE>::
+        Speedup future publishing by recording the subtree history during 
+        a push. This creates a merge commit and a second copy of all 
+        commits in the subtree. For more details, see the "--rejoin" 
+        option in git subtree.
+
+*-h*, *--help*::
+        Prints a usage page.
+
+Hooks
+-----
+
+*pre-commit*::
+        Warn about whitespace errors, fail if checksums don't match, and 
+        auto-generate .SRCINFO for all changed PKGBUILDs.
+
+*prepare-commit-msg*::
+        Prefill the commit message with a list of added/updated/deleted 
+        packages + versions (if any).
+
+Examples
+--------
+
+aurpublish setup::
+        Initialize a new repository with git hooks. Refer to Hooks section
+        for more info.
+
+aurpublish -p ansible-core-git::
+        Clone existing package from aur and add its url as a git subtree to 
+        the currently existing git repository.
+
+aurpublish ansible-core-git::
+        Push an existing subtree to AUR.
+
+aurpublish log::
+        View the git log of a package subtree.
+
+AUTHORS
+-------
+Eli Schwartz <eschwartz@archlinux.org>
