@@ -19,7 +19,7 @@ $(NAME): $(NAME).in
 doc/%: doc/%.asciidoc doc/asciidoc.conf
 	a2x --no-xmllint --asciidoc-opts="-f doc/asciidoc.conf" -d manpage -f manpage -D doc $<
 
-install: $(NAME)
+install: all
 	install -dm755 '$(DESTDIR)$(PREFIX)/bin'
 	install -m755 $(NAME) '$(DESTDIR)$(PREFIX)/bin/$(NAME)'
 	install -dm755 '$(DESTDIR)$(HOOKSDIR)'
