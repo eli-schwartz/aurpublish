@@ -142,9 +142,9 @@ if (( PULL_SUBTREE )); then
     # test if prefix already exists
     if is_package_in_git ${package}; then
         git subtree split -P "${package}" --rejoin
-        git subtree pull -P "${package}" aur:${pkgbase}.git master -m "Merge subtree '${package}'"
+        git subtree pull -P "${package}" aur@aur.archlinux.org:${pkgbase}.git master -m "Merge subtree '${package}'"
     else
-        git subtree add -P "${package}" aur:${package}.git master
+        git subtree add -P "${package}" aur@aur.archlinux.org:${package}.git master
     fi
     exit 0
 fi
@@ -152,4 +152,4 @@ fi
 if (( SPEEDUP )); then
     git subtree split -P "${package}" --rejoin
 fi
-git subtree push -P "${package}" aur:${pkgbase}.git master
+git subtree push -P "${package}" aur@aur.archlinux.org:${pkgbase}.git master
