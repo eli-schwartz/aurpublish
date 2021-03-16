@@ -47,7 +47,7 @@ Options
         Speedup future publishing by recording the subtree history during
         a push. This creates a merge commit and a second copy of all
         commits in the subtree. For more details, see the "--rejoin"
-        option in git subtree.
+        option in linkman:git-subtree[1].
 
 *-h*, *--help*::
         Prints a usage page.
