@@ -147,6 +147,18 @@ fi
 if (( ! URL_SET )); then
     # use git configured remoteUrl, if set
     REMOTE_URL=$(git config --default "${REMOTE_URL}" --get aurpublish.remoteUrl | sed 's:/*$::')
+
+    # warn the user if they have a non-default ssh alias for 'aur'
+    auralias=$(ssh -G aur | awk '$1 == "hostname" { print $2 }')
+    if [[ ${auralias} != 'aur' && ${auralias} != 'aur.archlinux.org' ]]; then
+        echo "Warning: You have a non-default alias for 'aur' in your ssh configuration. (${auralias})"
+        echo "Previous versions of aurpublish used the 'aur' ssh hostname, but you should now use the --url option."
+        echo ""
+        echo "This operation will use the git server at: ${REMOTE_URL}"
+        echo ""
+        read -p "Do you wish to continue? [y/n] " userwarned
+        [[ ${userwarned} = [yY] ]] || exit 1
+    fi
 fi
 
 pkgbase="$(sed -rn 's/pkgbase = (.*)/\1/p' "${package}"/.SRCINFO 2>/dev/null)"
