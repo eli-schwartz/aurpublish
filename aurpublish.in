@@ -22,6 +22,8 @@ usage() {
 		                      and a second copy of all commits in the subtree.
 		                      For more details, see the "--rejoin" option in git
 		                      subtree.
+		    -u, --url       Specify the URL of the server that should be used
+		                      for git operations.
 		    -h, --help      Show this usage message
 
 		COMMANDS
@@ -69,6 +71,11 @@ while [[ "${1}" != "" ]]; do
             ;;
         -s|--speedup)
             SPEEDUP=1
+            ;;
+        -u|--url)
+            REMOTE_URL=${2%/}
+            URL_SET=1
+            shift
             ;;
         log)
             LOG=1
@@ -135,6 +142,11 @@ if (( LOG )); then
     shift
     git log "${log_pre_opts[@]}" $(git subtree split -P "${package}") "$@"
     exit 0
+fi
+
+if (( ! URL_SET )); then
+    # use git configured remoteUrl, if set
+    REMOTE_URL=$(git config --default "${REMOTE_URL}" --get aurpublish.remoteUrl | sed 's:/*$::')
 fi
 
 pkgbase="$(sed -rn 's/pkgbase = (.*)/\1/p' "${package}"/.SRCINFO 2>/dev/null)"

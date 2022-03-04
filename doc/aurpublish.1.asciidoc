@@ -49,6 +49,9 @@ Options
         commits in the subtree. For more details, see the "--rejoin"
         option in linkman:git-subtree[1].
 
+*-u*, *--url* <URL>::
+        Specify the URL of the server that should be used for git operations.
+
 *-h*, *--help*::
         Prints a usage page.
 
@@ -62,6 +65,29 @@ Hooks
 *prepare-commit-msg*::
         Prefill the commit message with a list of added/updated/deleted
         packages + versions (if any).
+
+
+Specifying AUR server URL
+-------------------------
+You can use aurpublish to interact with a git server other than the default
+AUR git server at aur.archlinux.org. This may be useful if you are running
+your own AUR server.
+
+The upstream git server URL can be configured in two ways. You can set the
+URL with the -u/--url options when you run aurpublish. Or you can configure
+the server persistently in git by setting the aurpublish.remoteUrl option.
+
+Set the URL with --url::
+        aurpublish --url ssh://me@example.com mypackage
+
+Set the URL for the current git directory with git config::
+        git config aurpublish.remoteUrl ssh://me@example.com
+
+Set the URL globally with git config::
+        git config --global aurpublish.remoteUrl ssh://me@example.com
+
+For more details on git options see linkman:git-config[1].
+
 
 Examples
 --------
@@ -79,6 +105,9 @@ aurpublish ansible-core-git::
 
 aurpublish log::
         View the git log of a package subtree.
+
+aurpublish --url ssh://me@example.com ansible-core-git::
+        Push the subtree to a server at ssh://example.com.
 
 AUTHORS
 -------
