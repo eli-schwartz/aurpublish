@@ -51,7 +51,7 @@ is_package_in_git() {
 #### Do the great option check
 
 if [[ $# -eq 0 ]]; then
-    echo "error: No arguments passed. aurpublish needs a package to upload."
+    echo "Error: No arguments passed. aurpublish needs a package to upload."
     exit 1
 fi
 while [[ "${1}" != "" ]]; do
@@ -81,7 +81,7 @@ while [[ "${1}" != "" ]]; do
             ;;
         *)
             if [[ -n ${package} ]]; then
-                echo "error: multiple packages specified"
+                echo "Error: Multiple packages specified"
                 exit 1
             fi
             package=$(readlink -m "${1}")
@@ -97,7 +97,7 @@ done
 # Run from the repository root, no matter where the script is installed.
 toplevel=$(git rev-parse --show-toplevel) || exit 1
 if [[ $(git rev-parse --is-inside-git-dir) = true ]]; then
-    echo "error: cannot be run from within GIT_DIR"
+    echo "Error: Cannot be run from within GIT_DIR"
     exit 1
 elif [[ ! ${toplevel} -ef ${PWD} ]]; then
     cd "${toplevel}"
@@ -105,12 +105,12 @@ fi
 
 # sanity check
 if ! git rev-parse -q --verify HEAD > /dev/null ; then
-    echo "error: cannot be run from a branch without any commits"
+    echo "Error: Cannot be run from a branch without any commits"
     echo "At least commit a README.md or something..."
     exit 1
 fi
 if (( ! ( PULL_SUBTREE || SETUP ) )) && ! is_package_in_git "${package}"; then
-    echo "${0##*/}: unrecognized package '${package}'"
+    echo "${0##*/}: Unrecognized Package '${package}'"
     echo "Try '${0##*/} --help' for more information."
     exit 1
 fi
