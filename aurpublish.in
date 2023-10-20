@@ -142,7 +142,7 @@ if (( PULL_SUBTREE )); then
     # test if prefix already exists
     if is_package_in_git ${package}; then
         git subtree split -P "${package}" --rejoin
-        git subtree pull -P "${package}" aur:${pkgbase}.git master -m "Merge subtree '${package}'"
+        GIT_MERGE_AUTOEDIT=no git subtree pull -P "${package}" aur:${pkgbase}.git master -m "Merge subtree '${package}'"
     else
         git subtree add -P "${package}" aur:${package}.git master
     fi
