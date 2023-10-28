@@ -3,37 +3,40 @@
 old_commit_msg="$(cat ${1})"
 echo -n "" > "${1}"
 
-# Check for new PKGBUILDs
-for path in $(git diff --name-only --cached --diff-filter=A); do
-    if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
-        (
-            source "${path}"
-            : ${pkgbase:=${pkgname}}
-            echo -e "addpkg: ${pkgbase} ${epoch:+${epoch}:}${pkgver}-${pkgrel}\n" >> "${1}"
-        )
-    fi
-done
+if [[ ${old_commit_msg} != "mrgpkg: "* ]]
+then
+  # Check for new PKGBUILDs
+  for path in $(git diff --name-only --cached --diff-filter=A); do
+      if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
+          (
+              source "${path}"
+              : ${pkgbase:=${pkgname}}
+              echo -e "addpkg: ${pkgbase} ${epoch:+${epoch}:}${pkgver}-${pkgrel}\n" >> "${1}"
+          )
+      fi
+  done
 
-# Check for updated PKGBUILDs
-for path in $(git diff --name-only --cached --diff-filter=M); do
-    if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
-        (
-            source "${path}"
-            : ${pkgbase:=${pkgname}}
-            echo -e "upgpkg: ${pkgbase} ${epoch:+${epoch}:}${pkgver}-${pkgrel}\n" >> "${1}"
+  # Check for updated PKGBUILDs
+  for path in $(git diff --name-only --cached --diff-filter=M); do
+      if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
+          (
+              source "${path}"
+              : ${pkgbase:=${pkgname}}
+              echo -e "upgpkg: ${pkgbase} ${epoch:+${epoch}:}${pkgver}-${pkgrel}\n" >> "${1}"
 
-            # If the pkgrel is "1" and there is no VCS pkgver function (or there is one, but the git revision is "0"), assume a new version.
-            [[ $pkgver =~ .+\.r([0-9]+)\..+ ]]
-            [[ "${pkgrel}" = "1" && ( $(type -t pkgver) != "function" || ${BASH_REMATCH[1]} = 0 ) ]] && echo -e "Upstream Release: ${pkgname} ${pkgver}\n" >> "${1}"
-        )
-    fi
-done
+              # If the pkgrel is "1" and there is no VCS pkgver function (or there is one, but the git revision is "0"), assume a new version.
+              [[ $pkgver =~ .+\.r([0-9]+)\..+ ]]
+              [[ "${pkgrel}" = "1" && ( $(type -t pkgver) != "function" || ${BASH_REMATCH[1]} = 0 ) ]] && echo -e "Upstream Release: ${pkgname} ${pkgver}\n" >> "${1}"
+          )
+      fi
+  done
 
-# Check for deleted PKGBUILDs
-for path in $(git diff --name-only --cached --diff-filter=D); do
-    if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
-        echo -e "delpkg: ${path%/PKGBUILD}\n" >> "${1}"
-    fi
-done
+  # Check for deleted PKGBUILDs
+  for path in $(git diff --name-only --cached --diff-filter=D); do
+      if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
+          echo -e "delpkg: ${path%/PKGBUILD}\n" >> "${1}"
+      fi
+  done
+fi
 
 echo "${old_commit_msg}" >> "${1}"
