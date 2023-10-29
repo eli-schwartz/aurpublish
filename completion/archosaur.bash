@@ -14,7 +14,7 @@ __in_array() {
 }
 
 
-_aurpublish() {
+_archosaur() {
     local cur prev opts pkgnames
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -48,4 +48,4 @@ _aurpublish() {
     fi
 }
 
-complete -F _aurpublish aurpublish
+complete -F _archosaur archosaur

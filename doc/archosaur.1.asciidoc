@@ -1,31 +1,31 @@
-aurpublish(1)
+archosaur(1)
 =============
 
 Name
 ----
-aurpublish - PKGBUILD management framework for the Arch User Repository
+archosaur - A PKGBUILD management framework for the Arch User Repository
 
 
 Synopsis
 --------
-'aurpublish' [options] PACKAGE
+'archosaur' [options] PACKAGE
 
-'aurpublish' log [<options>] PACKAGE
+'archosaur' log [<options>] PACKAGE
 
-'aurpublish' setup
+'archosaur' setup
 
 
 Description
 -----------
-Aurpublish is an utility which helps maintainers of aur packages to submit updates.
+Archosaur is an utility which helps maintainers of aur packages to submit updates.
 
 
 How it works
 ------------
 Commit PKGBUILDs in named subdirectories.
-Export them to the AUR with the aurpublish command, using the subtree push
+Export them to the AUR with the archosaur command, using the subtree push
 stratagem. This preserves an independent history for third-party hosting,
-pull requests... ;)
+pull requests, etc.
 
 Commands
 --------
@@ -39,7 +39,7 @@ Commands
 Options
 -------
 
-*-p* <PACKAGE>::
+*-p*, *--pull* <PACKAGE>::
         Instead of publishing, pull changes from the AUR.
         Can import packages into a new subtree.
 
@@ -66,20 +66,21 @@ Hooks
 Examples
 --------
 
-aurpublish setup::
+archosaur setup::
         Initialize a new repository with git hooks. Refer to Hooks section
         for more info.
 
-aurpublish -p ansible-core-git::
+archosaur -p ansible-core-git::
         Clone existing package from aur and add its url as a git subtree to
         the currently existing git repository.
 
-aurpublish ansible-core-git::
+archosaur ansible-core-git::
         Push an existing subtree to AUR.
 
-aurpublish log::
+archosaur log::
         View the git log of a package subtree.
 
 AUTHORS
 -------
+txtsd <code@ihavea.quest>
 Eli Schwartz <eschwartz@archlinux.org>

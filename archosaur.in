@@ -51,7 +51,7 @@ is_package_in_git() {
 #### Do the great option check
 
 if [[ $# -eq 0 ]]; then
-    echo "Error: No arguments passed. aurpublish needs a package to upload."
+    echo "Error: No arguments passed. archosaur needs a package to upload."
     exit 1
 fi
 while [[ "${1}" != "" ]]; do

@@ -1,4 +1,4 @@
-#compdef aurpublish
+#compdef archosaur
 
 local curcontext="$curcontext" state line libs idx
 local -a pkg_dirs packages
