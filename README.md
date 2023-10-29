@@ -73,7 +73,7 @@ it to a new subtree.
 
 ## License
 
-This repository is licensed under the GPLv2 or (at your option) any later version.
+This repository is licensed under `GPL-3.0-or-later`.
 
 ## Credits
 
