@@ -13,11 +13,14 @@ git diff-index --check --cached $against -- 1>&2
 
 # fix environment of githooks
 unset GIT_DIR
-# make sure .SRCINFO is up to date
+# iterate over touched PKGBUILD's
 for path in $(git diff --name-only --cached --diff-filter=AM); do
     if [[ "${path}" =~ .*/PKGBUILD$ ]]; then
+        # make sure .SRCINFO is up to date
         echo -e "\e[01;32m *** Generating and adding .SRCINFO for ${path%/PKGBUILD} ***\e[00m"
-        (cd ${path%PKGBUILD} && makepkg --verifysource -f && makepkg --printsrcinfo > .SRCINFO) || exit 1
-        git add ${path%PKGBUILD}/.SRCINFO
+        (cd "${path%PKGBUILD}" && makepkg --verifysource -f && makepkg --printsrcinfo > .SRCINFO) || exit 1
+        # if namcap (PKGBUILD linter) is present in PATH -- call it
+        if which namcap >/dev/null 2>&1; then namcap -i "${path}"; fi
+        git add "${path%PKGBUILD}"/.SRCINFO
     fi
 done
